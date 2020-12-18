@@ -1,0 +1,234 @@
+<html>
+    <head>
+        <title>Select Menu</title>
+        <script src="jquery-3.5.1.js"></script>
+        <style>
+            
+            body {
+  
+                background-image: url("get_detimg.jpeg");
+                height: 100%;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: cover;
+                text-align: center;
+                font-style: italic;
+                font-size: larger;
+            }
+            h1{
+                font-size: 400%;
+            }
+            section{
+            
+                margin-left: 15%;
+                margin-top: -10%;
+                width: 50%;
+                padding: 150px;
+            
+            }
+    
+            #box p{
+                display: inline-block;
+            }
+
+
+        </style>
+        
+    </head>
+    <body>
+        
+
+        <div id="box">
+        <label for="name" id="id1">Choose a dish:</label>
+        <select name="name" id="name" oninput="runagain()">
+        </select>
+
+        <label for="quan" id = "id2"> Select quantity:</label>
+        <select name="quan" id="quan" oninput="runagain2()">
+        </select>
+        <p id="Number">  Number: </p>
+        <input type='number' id='num' value="1" min="1" oninput="change_cost()">
+        <p>Cost : <span id="cost"></span></p>
+        <button id="foradd" onclick="add()">add</button>
+        <button id="reset" onclick="reset()">reset</button>
+        <br><br>
+        <span id="repeat"></span>
+        <button id="but" onclick="submit()">submit</button>
+        </div>
+        <p id="tot"></p>
+
+        <script>
+
+            var cuisine;
+            var menu;
+            
+            var url = document.location.href,
+            url = decodeURIComponent(url);
+            var tmp,sendData;
+            params = url.split('?')[1].split('&'),
+            sendData = {}, tmp;
+            for (var i = 0, l = params.length; i < l; i++) {
+                tmp = params[i].split('=');
+                sendData[tmp[0]] = tmp[1];
+            }
+            cuisine = sendData.name;
+            var cust_id = sendData.cust_id;
+            cuisine = JSON.stringify(cuisine);
+            $.ajax({
+                async: false,
+                method:"POST",
+                dataType: "json",
+                data :{data:cuisine},
+                url:"Get_Menu.php",
+                success:function(dat){
+                    menu = dat;
+                }
+            });  
+
+            
+            var n = document.getElementById('name');
+            var lim1 = menu.dishNames.length;
+
+            
+
+            for(i=0;i<lim1;i++){
+                var k = menu.dishNames[i];
+                var str = document.createElement('option');
+                str.value = k;
+                str.innerHTML = k;
+                n.appendChild(str);
+            }
+
+            var q = document.getElementById('quan');
+            var k2 = n.options[n.selectedIndex].value;
+
+            var lim2 = Object.keys(menu[k2]).length;
+
+            for(i=0;i<lim2/2;i++){
+                var k = menu[k2][i];
+                var str = document.createElement('option');
+                str.value = k;
+                str.innerHTML = k;
+                q.appendChild(str);
+            }
+            var quForCost = "cost_"+q.options[q.selectedIndex].value;
+            $('#cost').text(menu[k2][quForCost]);
+
+
+            function runagain(){
+                var k3 = n.options[n.selectedIndex].value;
+
+                var child = q.lastElementChild;  
+                while (child) { 
+                    q.removeChild(child); 
+                    child = q.lastElementChild; 
+                }
+
+                var lim2 = Object.keys(menu[k3]).length;
+                $("#repeat").text("");
+                
+                $('#num').val(1);
+
+                for(i2=0;i2<lim2/2;i2++){
+                
+                    var k = menu[k3][i2];
+                    var str = document.createElement('option');
+                    str.value = k;
+                    str.innerHTML = k;
+                    q.appendChild(str);
+                }
+                quForCost = "cost_"+q.options[q.selectedIndex].value;
+                $('#cost').text(menu[k3][quForCost]);
+            }
+
+            function runagain2(){
+                var selectedDish = n.options[n.selectedIndex].value;
+                quForCost = "cost_"+q.options[q.selectedIndex].value;
+                $('#cost').text(menu[selectedDish][quForCost]);
+            }
+
+            function change_cost(){
+                var k3 = n.options[n.selectedIndex].value;
+                quForCost = "cost_"+q.options[q.selectedIndex].value;
+                $('#cost').text(menu[k3][quForCost]*$('#num').val() );
+            }
+
+            var tot = document.getElementById('tot');
+            
+            var sub={};
+            var i3=0;
+            var str2="";            
+            var totCost=0;
+
+            function add(){
+                var na = n.options[n.selectedIndex].value;
+                var qu = q.options[q.selectedIndex].value;
+                var nu = $('#num').val();
+                var co = $("#cost").text();
+                co = parseInt(co);
+                var dish = ""+na+"_"+qu;
+                sub[i3] ={};
+                var temp;
+                if(!jQuery.isEmptyObject(sub) &&  str2.includes(dish)){
+                    $("#repeat").text("If you want to increase quantity use reset.");
+                    return;
+                }
+                sub[i3].dishName = dish; 
+                sub[i3].quantity = nu;
+                sub[i3].cost = co;
+                str2 += "dish -- "+ sub[i3].dishName + " quantity -- " + sub[i3].quantity + " cost -- "+
+                            sub[i3].cost+ "<br>";
+                tot.innerHTML = str2;
+                totCost += sub[i3].cost;
+                i3++;
+            }
+
+            function reset(){
+                sub={};
+                str2="";
+                tot.innerHTML = str2;
+                i3=0;
+                $("#repeat").text("");
+                $('#num').val(1);
+                totCost = 0;
+            }
+
+            function submit(){
+                if(totCost == 0) return;
+                tot.innerHTML = JSON.stringify(sub);
+                var na = n.options[n.selectedIndex].value;
+                var ow = q.options[q.selectedIndex].value;
+                var jso = JSON.stringify(sub);
+                $.ajax({
+                    async: false,
+                    method:"POST",
+                    url:"Prepare_Bill.php",
+                    datatype: 'json',
+                    data: {data: jso, 'cust_id':cust_id},
+                    success:function(recData){
+                        var today = new Date();
+                        var dd = String(today.getDate()).padStart(2, '0');
+                        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                        var yyyy = today.getFullYear();
+                        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                        today = mm + '/' + dd + '/' + yyyy;
+                        var st = "<br /><br />------Thank You For Ordering-------<br /><br /><br /><br />"+
+                                 "------Total Bill--------<br /><br />"+
+                                 "Customer id :" + cust_id + "<br />"+
+                                 "Order id :" + recData + "<br />"+
+                                 "Total Cost :" + totCost +"<br />"+
+                                 "Date :" + today +"<br />"+
+                                 "Time :" + time;
+
+                        $('#tot').html(st);
+
+                        r3 = document.getElementById('box');
+                        r3.parentNode.removeChild(r3);
+
+                    }
+                });
+            }
+        </script>
+        
+    </body>
+</html>

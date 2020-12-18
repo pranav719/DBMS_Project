@@ -1,0 +1,53 @@
+body{
+    background: url(https://scontent.fpat3-1.fna.fbcdn.net/v/t1.0-9/s960x960/80450406_153636099377827_6690458586352451584_o.jpg?_nc_cat=102&_nc_ohc=PdoYuhR0i5oAQlY3ryuNQ9fTp33QR3ZcOwzToMcSi2BBjYQYvoF9TSL1w&_nc_ht=scontent.fpat3-1.fna&oh=bd85dc6dfe5deda9c04514e573f2f6d0&oe=5E833D80)
+    no-repeat center center fixed;
+    background-size: cover;
+    font-family: sans-serif;
+}
+
+
+
+
+
+showcase h1{
+    color: rgb(19, 17, 17);
+    font-family: cursive;
+    text-align: center;
+}
+
+showcase h3{
+    color: rgb(22, 20, 20);
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.category{
+    color: rgb(22, 21, 21);
+    margin-top: 5%;
+    display: flex;
+    text-align: center;
+    font-family: cursive;
+}
+
+img{
+    width: 70%;
+    border-radius: 50%;
+}
+
+.snacks, .grill{
+    padding-left: 1rem;
+}
+
+h4{
+    font-size: 1.5rem; /*1rem=16px */
+    margin: 3%;
+}
+
+.btn{
+    background-color: gold;
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    
+    
+}

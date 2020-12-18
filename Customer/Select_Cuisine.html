@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="cuisine.css">
+    
+    <title>Select Cuisine</title>
+</head>
+<body>
+    <showcase>
+        <div class="container">
+            <h1>Food tastes better when you eat it with your family</h1>
+            <h3>SELECT CUISINE OF YOUR CHOICE</h3>
+            <div class="category">
+                <div class="thai">
+                    <img src="north_ind.jpeg" alt="">
+                    <h4>North Indian</h4>
+                    <p>enjoy NORTH INDIAN food </p>
+                    <a><button class="btn" onclick="toMenu('North Indian')">Select</button></a>
+                </div>
+                <div class="snacks">
+                    <img src="south_ind.jpeg" alt="">
+                    <h4>South Indian</h4>
+                    <p>enjoy SOUTH INDIAN food </p>
+                    <a><button class="btn" onclick="toMenu('South Indian')">Select</button></a>
+                </div>
+                <div class="grill">
+                    <img src="chinese.jpg" alt="">
+                    <h4>Chinese</h4>
+                    <p>enjoy CHINESE food</p>
+                    <P></P>
+                </br>
+                
+            </br>
+                    <a><button class="btn" onclick="toMenu('Chinese')">Select</button></a>
+                </div>
+            </div>
+        </div>
+        <p id = "a1"></p>
+    </showcase> 
+
+    <script language="javascript" type="text/javascript" >
+        var url1 = document.location.href;
+
+        var tmp,sendData;
+            params = url1.split('?')[1].split('&'),
+            sendData = {}, tmp;
+            for (var i = 0, l = params.length; i < l; i++) {
+                tmp = params[i].split('=');
+                sendData[tmp[0]] = tmp[1];
+            }
+        var url2 = "Select_Menu.html?" + encodeURIComponent(params); 
+        var k = document.getElementById('a1');
+        k.innerHTML = url2;
+        function toMenu(cuisine) {
+            sendurl = url2+'&name=' + encodeURIComponent(cuisine);
+            k.innerHTML= sendurl;
+
+            document.location.href = sendurl;
+        }
+    </script>
+     
+     
+</body>
+</html>
